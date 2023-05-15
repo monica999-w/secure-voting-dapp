@@ -1,4 +1,4 @@
-import NavBar from './Sidebar';
+import NavBar from '../../src/js/sidebar/Sidebar';
 
 const Home = () => {
   return (

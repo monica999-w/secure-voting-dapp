@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { loadBlockchainData } from '../Web3helpers';
-import web3 from '../Web3helpers';
+import { loadBlockchainData } from '../../Web3helpers';
+import web3 from '../../Web3helpers';
 import { useNavigate } from 'react-router-dom';
-import "../css/authen.css"
+import "../../css/authen.css"
 
 
 const Signup = () => {

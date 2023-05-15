@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaUserCircle,FaUser,FaEdit,FaUserPlus,FaChartBar,FaSignOutAlt, FaVoteYea,FaThLarge, FaPlus, FaChartLine, FaPowerOff } from "react-icons/fa";
-import "../css/sidebar.css";
-import web3 from "../Web3helpers";
+import "./sidebar.css";
+import web3 from "../../Web3helpers";
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
@@ -10,7 +10,7 @@ const Sidebar = () => {
   const email = localStorage.getItem("email");
   const account = localStorage.getItem("account");
   const metamaskAddress = web3.currentProvider.selectedAddress;
-  const truncatedAddress = `${metamaskAddress.slice(0, 6)}...${metamaskAddress.slice(-4)}`;
+  const truncatedAddress = metamaskAddress ? `${metamaskAddress.slice(0, 6)}...${metamaskAddress.slice(-4)}` : '';
 
   return (
     <div className="sidebar">

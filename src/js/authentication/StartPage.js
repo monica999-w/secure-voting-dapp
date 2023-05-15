@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import LoginForm from './Signin';
 import SignupForm from './Signup';
-import '../css/startPage.css';
+import '../../css/startPage.css';
 
 function StartPage() {
   const [isSignIn, setIsSignIn] = useState(true);

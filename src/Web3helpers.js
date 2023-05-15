@@ -1,5 +1,6 @@
 import Web3 from 'web3';
 import Auth from './build/contracts/Auth.json';
+import VotingSystem from './build/contracts/VotingSystem.json';
 
 export const loadWeb3 = async () => {
     if (window.ethereum) {
@@ -27,9 +28,19 @@ export const loadWeb3 = async () => {
     
     const accounts = await web3.eth.getAccounts();
     const networkId = await web3.eth.net.getId();
+
+     let auth, votingSystem; 
   
     if (Auth.networks[networkId]) {
-      const auth = new web3.eth.Contract(Auth.abi, Auth.networks[networkId].address);
-      return { auth, accounts: accounts[0] };
+     auth = new web3.eth.Contract(Auth.abi, Auth.networks[networkId].address);
     }
+
+    if (VotingSystem.networks[networkId]) {
+      votingSystem = new web3.eth.Contract(
+        VotingSystem.abi,
+        VotingSystem.networks[networkId].address
+      );
+    }
+  
+    return { auth, votingSystem, accounts: accounts[0] };
   };
