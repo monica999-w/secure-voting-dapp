@@ -11,6 +11,7 @@ contract VotingSystem {
         uint age;
         string description;
         string image;
+        uint electionId;
     }
 
     struct Election {
@@ -25,8 +26,21 @@ contract VotingSystem {
     Candidate[] public candidates;
     mapping(uint => bool) public candidateExists;
 
-    event NewElection(string name, ElectionType electionType, string organizedBy, uint startDate, uint endDate );
-    event NewCandidate(uint candidateId, string fullName, uint age, string description, string image);
+    event NewElection(
+        string name,
+        ElectionType electionType,
+        string organizedBy,
+        uint startDate,
+        uint endDate
+    );
+    event NewCandidate(
+        uint candidateId,
+        string fullName,
+        uint age,
+        string description,
+        string image,
+        uint electionId
+    );
 
     function addElection(
         string memory _name,
@@ -35,9 +49,14 @@ contract VotingSystem {
         uint _startDate,
         uint _endDate
     ) public {
-        require(!electionExists(_name, _startDate, _endDate), "Election with the same name or overlapping time period already exists.");
+        require(
+            !electionExists(_name, _startDate, _endDate),
+            "Election with the same name or overlapping time period already exists."
+        );
 
-        elections.push(Election(_name, _electionType, _organizedBy, _startDate, _endDate));
+        elections.push(
+            Election(_name, _electionType, _organizedBy, _startDate, _endDate)
+        );
 
         emit NewElection(_name, _electionType, _organizedBy, _startDate, _endDate);
     }
@@ -46,31 +65,64 @@ contract VotingSystem {
         string memory _fullName,
         uint _age,
         string memory _description,
-        string memory _image
-    ) public {
-        require(elections.length > 0, "No elections available. Please create an election first.");
-        require(!electionEnded(), "Election has ended. No more candidates can be added.");
-        require(!candidateExists[candidates.length], "Candidate already exists.");
+        string memory _image,
+        uint _electionId
 
-        candidates.push(Candidate(candidates.length, _fullName, _age, _description, _image));
+    ) public {
+        require(
+            elections.length > 0, 
+            "No elections available. Please create an election first.");
+       
+        require(
+            !electionEnded(), 
+            "Election has ended. No more candidates can be added.");
+        
+        require(
+            !candidateExists[candidates.length],
+            "Candidate already exists."
+        );
+
+        candidates.push(
+            Candidate(
+                candidates.length,
+                _fullName,
+                _age,
+                _description,
+                _image,
+                _electionId
+            )
+        );
         candidateExists[candidates.length - 1] = true;
 
-        emit NewCandidate(candidates.length - 1, _fullName, _age, _description, _image);
+        emit NewCandidate(
+            candidates.length - 1,
+            _fullName,
+            _age,
+            _description,
+            _image,
+            _electionId
+        );
     }
 
-    function getCandidateDetails(uint _candidateId) public view returns (
-        string memory,
-        uint,
-        string memory,
-        string memory
-    ) {
+    function getCandidateDetails(uint _candidateId)
+        public
+        view
+        returns (
+            string memory,
+            uint,
+            string memory,
+            string memory,
+            uint
+        )
+    {
         require(candidateExists[_candidateId], "Candidate does not exist.");
         Candidate memory candidate = candidates[_candidateId];
         return (
             candidate.fullName,
             candidate.age,
             candidate.description,
-            candidate.image
+            candidate.image,
+            candidate.electionId
         );
     }
 
@@ -94,6 +146,10 @@ contract VotingSystem {
 
     function getElectionCount() public view returns (uint) {
     return elections.length;
+    }
+
+    function getCandidateCount() public view returns (uint) {
+    return candidates.length;
     }
 
     function electionEnded() public view returns (bool) {

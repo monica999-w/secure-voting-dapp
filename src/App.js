@@ -7,7 +7,9 @@ import Home from './js/Home';
 import AddCandidate from './js/canditate/AddCanditate';
 import AddElection from './js/election/AddElection';
 import DetailsElection from './js/election/DetailsElection';
+import DetailCandidates from './js/canditate/DetailCandidates';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 
 function App() {
   const email = localStorage.getItem('email');
@@ -20,6 +22,7 @@ return (
 <Route path="/Signup" element={<SignUp />} />
 <Route path="/Home" element={email ? <Home /> : <Navigate to="/" />} />
 <Route path="/add-candidate" element={<AddCandidate />} />
+<Route path="/candidates" element={<DetailCandidates />} />
 <Route path="/voting-area" element={<DetailsElection />} />
 <Route path="/create-election" element={ email ? <AddElection /> : <Navigate to= "/" /> } />
 </Routes>
