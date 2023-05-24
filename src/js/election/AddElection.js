@@ -11,10 +11,8 @@ const AddElection = () => {
   const [organizedBy, setOrganizedBy] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-   
 
-
-useEffect(() => {
+  useEffect(() => {
     const init = async () => {
       const { votingSystem } = await loadBlockchainData();
       setVotingSystem(votingSystem);
@@ -23,16 +21,14 @@ useEffect(() => {
     init();
   }, []);
 
-const handleAddElection = async () => {
+  const handleAddElection = async () => {
     try {
       const startTimestamp = new Date(startDate).getTime() / 1000; // Convert milliseconds to seconds
       const endTimestamp = new Date(endDate).getTime() / 1000; // Convert milliseconds to seconds
 
-
       const accounts = await web3.eth.getAccounts();
       const fromAddress = accounts[0];
 
-      
       await votingSystem.methods
         .addElection(name, electionType, organizedBy, startTimestamp, endTimestamp)
         .send({ from: fromAddress });
@@ -50,8 +46,8 @@ const handleAddElection = async () => {
   };
 
   return (
-     <div className="page-container">
-      <Sidebar/>
+    <div className="page-container">
+      <Sidebar />
       <div className="content-container">
         <nav className="navbar">
           <h2 className="navbar-title">Create Election</h2>
@@ -72,14 +68,14 @@ const handleAddElection = async () => {
               <select
                 id="electionType"
                 value={electionType}
-                onChange={(e) => setElectionType(e.target.value)}className="election-type-select"
+                onChange={(e) => setElectionType(e.target.value)}
+                className="election-type-select"
               >
                 <option value="">Select Type</option>
                 <option value="0">Political</option>
                 <option value="1">Corporation</option>
                 <option value="2">Academics</option>
               </select>
-
             </div>
             <div className="form-groups">
               <label htmlFor="organizedBy">Organized By:</label>
@@ -90,11 +86,10 @@ const handleAddElection = async () => {
                 onChange={(e) => setOrganizedBy(e.target.value)}
               />
             </div>
-           
             <div className="form-groups">
               <label htmlFor="startDate">Start Date:</label>
               <input
-                type="date"
+                type="datetime-local"
                 id="startDate"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
@@ -103,7 +98,7 @@ const handleAddElection = async () => {
             <div className="form-groups">
               <label htmlFor="endDate">End Date:</label>
               <input
-                type="date"
+                type="datetime-local"
                 id="endDate"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
@@ -120,3 +115,4 @@ const handleAddElection = async () => {
 };
 
 export default AddElection;
+

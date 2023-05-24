@@ -1,36 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { loadBlockchainData } from '../../Web3helpers';
+import { Link } from 'react-router-dom';
 import Sidebar from '../sidebar/Sidebar';
 import './detailsElection.css';
 import politicalImage from '../../img/political.png';
 import corporationImage from '../../img/corporation.png';
 import academicsImage from '../../img/academics.png';
-import { format } from 'date-fns';
-
+import { format, differenceInSeconds } from 'date-fns';
 
 const DetailsElection = () => {
   const [votingSystem, setVotingSystem] = useState(null);
-  const [elections, setElections] = useState([]);
-  
+  const [activeElections, setActiveElections] = useState([]);
 
-const getElectionImage = (type) => {
-  switch (parseInt(type)) {
-    case 0:
-      return politicalImage;
-    case 1:
-      return corporationImage;
-    case 2:
-      return academicsImage;
-    default:
-      return '';
-  }
-};
-
-const viewCandidatesDetails = async (electionIndex) => {
-  const candidatesDetails = await votingSystem.methods.getCandidatesDetails(electionIndex).call();
-  console.log(candidatesDetails);
-};
-
+  const getElectionImage = (type) => {
+    switch (parseInt(type)) {
+      case 0:
+        return politicalImage;
+      case 1:
+        return corporationImage;
+      case 2:
+        return academicsImage;
+      default:
+        return '';
+    }
+  };
 
   useEffect(() => {
     const init = async () => {
@@ -43,28 +36,47 @@ const viewCandidatesDetails = async (electionIndex) => {
 
   useEffect(() => {
     if (votingSystem) {
-      const fetchElections = async () => {
-        const electionCount = await votingSystem.methods.getElectionCount().call();
-        const fetchedElections = [];
-        for (let i = 0; i < electionCount; i++) {
-          const electionDetails = await votingSystem.methods.getElectionDetails(i).call();
-          const formattedElectionDetails = {
-            name: electionDetails[0],
-            electionType: electionDetails[1],
-            organizedBy: electionDetails[2],
-            startDate: new Date(electionDetails[3] * 1000).toLocaleDateString(),
-            endDate: new Date(electionDetails[4] * 1000).toLocaleDateString(),
+      const fetchActiveElections = async () => {
+        const activeElections = await votingSystem.methods.getActiveElections().call();
+        const currentTimestamp = Math.floor(Date.now() / 1000);
+
+        const formattedActiveElections = activeElections.map((election) => {
+          const endDate = parseInt(election.endDate);
+          const remainingTime = endDate > currentTimestamp ? endDate - currentTimestamp : 0;
+
+          return {
+            ...election,
+            remainingTime,
           };
-          fetchedElections.push(formattedElectionDetails);
-        }
-        setElections(fetchedElections);
+        });
+
+        setActiveElections(formattedActiveElections);
       };
 
-      fetchElections();
+      fetchActiveElections();
+
+      const interval = setInterval(fetchActiveElections, 1000); // Actualizează alegerile active la fiecare secundă
+
+      return () => {
+        clearInterval(interval);
+      };
     }
   }, [votingSystem]);
 
- 
+  const formatRemainingTime = (remainingTime) => {
+    if (remainingTime <= 0) {
+      return 'Election has ended';
+    }
+
+    const days = Math.floor(remainingTime / (60 * 60 * 24));
+    const hours = Math.floor((remainingTime % (60 * 60 * 24)) / (60 * 60));
+    const minutes = Math.floor((remainingTime % (60 * 60)) / 60);
+    const seconds = remainingTime % 60;
+
+    return `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div className="page-container">
@@ -74,21 +86,24 @@ const viewCandidatesDetails = async (electionIndex) => {
           <h2 className="navbar-title">Area Voter</h2>
         </nav>
         <div className="elections-container">
-          {elections.map((election, index) => (
+          {activeElections.map((election, index) => (
             <div className="election-item" key={index}>
               <h2>{election.name}</h2>
-              <p>  {election.startDate} - {election.endDate}</p>
+              <p>
+                {election.endDate > Math.floor(Date.now() / 1000)
+                  ? `Remaining time: ${formatRemainingTime(election.remainingTime)}`
+                  : 'Election has ended'}
+              </p>
               <img
-                  src={getElectionImage(election.electionType)}
-                  alt={`Election ${index + 1}`}
-                  className="election-image"
-                />
-                <button
-                    onClick={() => viewCandidatesDetails(index)}
-                    className="view-candidates-button"
-                  >
-                    View Candidates
-                  </button>
+                src={getElectionImage(election.electionType)}
+                alt={`Election ${index + 1}`}
+                className="election-image"
+              />
+              {election.endDate > Math.floor(Date.now() / 1000) && (
+                <Link to={`/candidates/${index}`} className="view-candidates-button">
+                  View Candidates
+                </Link>
+              )}
             </div>
           ))}
         </div>

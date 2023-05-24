@@ -67,7 +67,6 @@ contract VotingSystem {
         string memory _description,
         string memory _image,
         uint _electionId
-
     ) public {
         require(
             elections.length > 0, 
@@ -126,30 +125,34 @@ contract VotingSystem {
         );
     }
 
-    function getElectionDetails(uint _electionId) public view returns (
-    string memory,
-    ElectionType,
-    string memory,
-    uint,
-    uint
-      ) {
-    require(_electionId < elections.length, "Election does not exist.");
-    Election memory election = elections[_electionId];
-    return (
-        election.name,
-        election.electionType,
-        election.organizedBy,
-        election.startDate,
-        election.endDate
-    );
+    function getElectionDetails(uint _electionId)
+        public
+        view
+        returns (
+            string memory,
+            ElectionType,
+            string memory,
+            uint,
+            uint
+        )
+    {
+        require(_electionId < elections.length, "Election does not exist.");
+        Election memory election = elections[_electionId];
+        return (
+            election.name,
+            election.electionType,
+            election.organizedBy,
+            election.startDate,
+            election.endDate
+        );
     }
 
     function getElectionCount() public view returns (uint) {
-    return elections.length;
+        return elections.length;
     }
 
     function getCandidateCount() public view returns (uint) {
-    return candidates.length;
+        return candidates.length;
     }
 
     function electionEnded() public view returns (bool) {
@@ -160,26 +163,39 @@ contract VotingSystem {
         return block.timestamp > currentElection.endDate;
     }
 
-
-   function electionExists(
-    string memory _name,
-    uint _startDate,
-    uint _endDate
-    ) internal view returns (bool) {
-    for (uint i = 0; i < elections.length; i++) {
-        Election storage existingElection = elections[i];
-        if (
-            keccak256(abi.encodePacked(existingElection.name)) == keccak256(abi.encodePacked(_name)) &&
-            (
-                (_startDate >= existingElection.startDate && _startDate <= existingElection.endDate) ||
-                (_endDate >= existingElection.startDate && _endDate <= existingElection.endDate)
-            )
-        ) {
-            return true;
+    function getActiveElections() public view returns (Election[] memory) {
+        uint activeElectionCount = 0;
+        for (uint i = 0; i < elections.length; i++) {
+            if (block.timestamp >= elections[i].startDate && block.timestamp <= elections[i].endDate) {
+                activeElectionCount++;
+            }
         }
+        Election[] memory activeElections = new Election[](activeElectionCount);
+        uint currentIndex = 0;
+        for (uint i = 0; i < elections.length; i++) {
+            if (block.timestamp >= elections[i].startDate && block.timestamp <= elections[i].endDate) {
+                activeElections[currentIndex] = elections[i];
+                currentIndex++;
+            }
+        }
+        return activeElections;
     }
-    return false;
-  }
- 
 
+    function electionExists(
+        string memory _name,
+        uint _startDate,
+        uint _endDate
+    ) internal view returns (bool) {
+        for (uint i = 0; i < elections.length; i++) {
+            Election storage existingElection = elections[i];
+            if (
+                keccak256(abi.encodePacked(existingElection.name)) == keccak256(abi.encodePacked(_name)) &&
+                ((_startDate >= existingElection.startDate && _startDate <= existingElection.endDate) ||
+                    (_endDate >= existingElection.startDate && _endDate <= existingElection.endDate))
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

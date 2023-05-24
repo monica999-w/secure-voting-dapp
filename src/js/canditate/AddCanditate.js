@@ -12,6 +12,7 @@ const AddCandidate = () => {
   const [image, setImage] = useState('');
   const [electionId, setElectionId] = useState('');
   const [elections, setElections] = useState([]);
+  const [activeElections, setActiveElections] = useState([]);
 
   useEffect(() => {
     const init = async () => {
@@ -19,14 +20,27 @@ const AddCandidate = () => {
       setVotingSystem(votingSystem);
       const electionCount = await votingSystem.methods.getElectionCount().call();
       const fetchedElections = [];
+      const activeElections = [];
       for (let i = 0; i < electionCount; i++) {
         const electionDetails = await votingSystem.methods.getElectionDetails(i).call();
-        fetchedElections.push({
+        const endDate = parseInt(electionDetails[4]);
+        const isActive = endDate > Math.floor(Date.now() / 1000);
+
+        const election = {
           id: i,
-          name: electionDetails[0]
-        });
+          name: electionDetails[0],
+          isActive: isActive
+        };
+
+        fetchedElections.push(election);
+
+        if (isActive) {
+          activeElections.push(election);
+        }
       }
+
       setElections(fetchedElections);
+      setActiveElections(activeElections);
     };
 
     init();
@@ -106,18 +120,22 @@ const AddCandidate = () => {
             </div>
             <div className="form-group">
               <label htmlFor="electionId">Select Election:</label>
-              <select
-                id="electionId"
-                value={electionId}
-                onChange={(e) => setElectionId(e.target.value)}
-              >
-                <option value="">Select Election</option>
-                {elections.map((election) => (
-                  <option key={election.id} value={election.id}>
-                    {election.name}
-                  </option>
-                ))}
-              </select>
+              {activeElections.length > 0 ? (
+                <select
+                  id="electionId"
+                  value={electionId}
+                  onChange={(e) => setElectionId(e.target.value)}
+                >
+                  <option value="">Select Election</option>
+                  {activeElections.map((election) => (
+                    <option key={election.id} value={election.id}>
+                      {election.name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <p>No active elections</p>
+              )}
             </div>
             <button className="add-button" type="button" onClick={handleAddCandidate}>
               Add Candidate
