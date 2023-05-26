@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { loadBlockchainData } from '../../Web3helpers';
 import Sidebar from '../sidebar/Sidebar';
-//import './detailCandidates.css';
+//import './CandidatesPage.css';
+import { useParams } from 'react-router-dom';
 
-const DetailCandidates = ({ match }) => {
+const CandidatesPage = () => {
+  const { electionId } = useParams();
   const [votingSystem, setVotingSystem] = useState(null);
   const [candidates, setCandidates] = useState([]);
+  const [electionName, setElectionName] = useState('');
 
   useEffect(() => {
     const init = async () => {
       const { votingSystem } = await loadBlockchainData();
       setVotingSystem(votingSystem);
+      const electionDetails = await votingSystem.methods.getElectionDetails(parseInt(electionId)).call();
+      setElectionName(electionDetails[1]);
     };
 
     init();
-  }, []);
+  }, [electionId]);
 
   useEffect(() => {
     if (votingSystem) {
@@ -24,18 +29,20 @@ const DetailCandidates = ({ match }) => {
 
         for (let i = 0; i < candidateCount; i++) {
           const candidateDetails = await votingSystem.methods.getCandidateDetails(i).call();
-          const electionId = parseInt(candidateDetails[4]);
+          const candidateElectionId = parseInt(candidateDetails[4]);
 
-          const formattedCandidateDetails = {
-            id: i,
-            fullName: candidateDetails[0],
-            age: parseInt(candidateDetails[1]),
-            description: candidateDetails[2],
-            image: candidateDetails[3],
-            electionId: electionId,
-          };
+          if (candidateElectionId === parseInt(electionId)) {
+            const formattedCandidateDetails = {
+              id: i,
+              fullName: candidateDetails[0],
+              age: parseInt(candidateDetails[1]),
+              description: candidateDetails[2],
+              image: candidateDetails[3],
+              electionId: candidateElectionId,
+            };
 
-          fetchedCandidates.push(formattedCandidateDetails);
+            fetchedCandidates.push(formattedCandidateDetails);
+          }
         }
 
         setCandidates(fetchedCandidates);
@@ -43,14 +50,14 @@ const DetailCandidates = ({ match }) => {
 
       fetchCandidates();
     }
-  }, [votingSystem]);
+  }, [votingSystem, electionId]);
 
   return (
     <div className="page-container">
       <Sidebar />
       <div className="content-container">
         <nav className="navbar">
-          <h2 className="navbar-title">Candidate Details</h2>
+          <h2 className="navbar-title">{electionName} Candidates</h2>
         </nav>
         <div className="candidates-container">
           {candidates.length > 0 ? (
@@ -63,7 +70,7 @@ const DetailCandidates = ({ match }) => {
               </div>
             ))
           ) : (
-            <p>No candidates available</p>
+            <p>No candidates available for this election.</p>
           )}
         </div>
       </div>
@@ -71,4 +78,4 @@ const DetailCandidates = ({ match }) => {
   );
 };
 
-export default DetailCandidates;
+export default CandidatesPage;

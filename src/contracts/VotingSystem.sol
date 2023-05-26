@@ -2,9 +2,8 @@
 pragma solidity ^0.8.0;
 
 contract VotingSystem {
-
     enum ElectionType { Political, Corporation, Academics }
-    
+
     struct Candidate {
         uint id;
         string fullName;
@@ -15,6 +14,7 @@ contract VotingSystem {
     }
 
     struct Election {
+        uint id;
         string name;
         ElectionType electionType;
         string organizedBy;
@@ -27,12 +27,14 @@ contract VotingSystem {
     mapping(uint => bool) public candidateExists;
 
     event NewElection(
+        uint id,
         string name,
         ElectionType electionType,
         string organizedBy,
         uint startDate,
         uint endDate
     );
+
     event NewCandidate(
         uint candidateId,
         string fullName,
@@ -54,11 +56,12 @@ contract VotingSystem {
             "Election with the same name or overlapping time period already exists."
         );
 
+        uint electionId = elections.length;
         elections.push(
-            Election(_name, _electionType, _organizedBy, _startDate, _endDate)
+            Election(electionId, _name, _electionType, _organizedBy, _startDate, _endDate)
         );
 
-        emit NewElection(_name, _electionType, _organizedBy, _startDate, _endDate);
+        emit NewElection(electionId, _name, _electionType, _organizedBy, _startDate, _endDate);
     }
 
     function addCandidate(
@@ -69,13 +72,15 @@ contract VotingSystem {
         uint _electionId
     ) public {
         require(
-            elections.length > 0, 
-            "No elections available. Please create an election first.");
-       
+            elections.length > 0,
+            "No elections available. Please create an election first."
+        );
+
         require(
-            !electionEnded(), 
-            "Election has ended. No more candidates can be added.");
-        
+            !electionEnded(),
+            "Election has ended. No more candidates can be added."
+        );
+
         require(
             !candidateExists[candidates.length],
             "Candidate already exists."
@@ -129,6 +134,7 @@ contract VotingSystem {
         public
         view
         returns (
+            uint,
             string memory,
             ElectionType,
             string memory,
@@ -139,6 +145,7 @@ contract VotingSystem {
         require(_electionId < elections.length, "Election does not exist.");
         Election memory election = elections[_electionId];
         return (
+            election.id,
             election.name,
             election.electionType,
             election.organizedBy,
@@ -179,6 +186,32 @@ contract VotingSystem {
             }
         }
         return activeElections;
+    }
+
+    function getCandidatesByElectionId(uint _electionId) public view returns (Candidate[] memory) {
+        require(_electionId < elections.length, "Election does not exist.");
+
+        uint candidateCount = 0;
+
+        // Count the candidates belonging to the election
+        for (uint i = 0; i < candidates.length; i++) {
+            if (candidates[i].electionId == _electionId) {
+                candidateCount++;
+            }
+        }
+
+        Candidate[] memory electionCandidates = new Candidate[](candidateCount);
+        uint currentIndex = 0;
+
+        // Get the candidates belonging to the election
+        for (uint i = 0; i < candidates.length; i++) {
+            if (candidates[i].electionId == _electionId) {
+                electionCandidates[currentIndex] = candidates[i];
+                currentIndex++;
+            }
+        }
+
+        return electionCandidates;
     }
 
     function electionExists(

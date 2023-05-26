@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { loadBlockchainData } from '../../Web3helpers';
 import web3 from '../../Web3helpers';
 import Sidebar from '../sidebar/Sidebar';
-import './addElection.css';
+import '../../css/addElection.css';
 
 const AddElection = () => {
   const [votingSystem, setVotingSystem] = useState(null);

@@ -23,12 +23,12 @@ const AddCandidate = () => {
       const activeElections = [];
       for (let i = 0; i < electionCount; i++) {
         const electionDetails = await votingSystem.methods.getElectionDetails(i).call();
-        const endDate = parseInt(electionDetails[4]);
+        const endDate = parseInt(electionDetails[5]);
         const isActive = endDate > Math.floor(Date.now() / 1000);
 
         const election = {
-          id: i,
-          name: electionDetails[0],
+          id: parseInt(electionDetails[0]),
+          name: electionDetails[1],
           isActive: isActive
         };
 

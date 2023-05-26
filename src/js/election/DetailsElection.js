@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { loadBlockchainData } from '../../Web3helpers';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Sidebar from '../sidebar/Sidebar';
-import './detailsElection.css';
+import '../../css/detailsElection.css';
 import politicalImage from '../../img/political.png';
 import corporationImage from '../../img/corporation.png';
 import academicsImage from '../../img/academics.png';
 import { format, differenceInSeconds } from 'date-fns';
 
 const DetailsElection = () => {
+  const { electionId } = useParams();
   const [votingSystem, setVotingSystem] = useState(null);
   const [activeElections, setActiveElections] = useState([]);
 
@@ -78,6 +79,8 @@ const DetailsElection = () => {
       .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  console.log('electionId:', electionId); // Verifică valoarea electionId în consolă
+
   return (
     <div className="page-container">
       <Sidebar />
@@ -100,7 +103,7 @@ const DetailsElection = () => {
                 className="election-image"
               />
               {election.endDate > Math.floor(Date.now() / 1000) && (
-                <Link to={`/candidates/${index}`} className="view-candidates-button">
+                <Link to={`/candidates/${election.id}`} className="view-candidates-button">
                   View Candidates
                 </Link>
               )}
