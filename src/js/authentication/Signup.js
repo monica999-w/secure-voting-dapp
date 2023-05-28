@@ -34,7 +34,7 @@ const Signup = () => {
     const { auth, accounts } = await loadBlockchainData();
     try {
       await auth.methods.createAccount(username, email, web3.utils.sha3(password), web3.utils.sha3(confirmPassword)).send({ from: accounts });
-      navigate('/signin');
+      navigate('/');
     } catch (e) {
       setError('Invalid input');
     }
@@ -42,7 +42,7 @@ const Signup = () => {
 
   return (
 <form onSubmit={handleSubmit} className="form">
-    <div className="form-group">
+    <div className="form-groupp">
       <input
         type="text"
         value={username}
@@ -52,7 +52,7 @@ const Signup = () => {
         required
       />
     </div>
-    <div className="form-group">
+    <div className="form-groupp">
       <input
         type="email"
         value={email}
@@ -62,7 +62,7 @@ const Signup = () => {
         required
       />
     </div>
-    <div className="form-group">
+    <div className="form-groupp">
       <input
         type="password"
         value={password}
@@ -72,7 +72,7 @@ const Signup = () => {
         required
       />
     </div>
-    <div className="form-group">
+    <div className="form-groupp">
       <input
         type="password"
         value={confirmPassword}

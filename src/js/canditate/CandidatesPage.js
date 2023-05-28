@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { loadBlockchainData } from '../../Web3helpers';
 import Sidebar from '../sidebar/Sidebar';
-//import './CandidatesPage.css';
+import '../../css/candidatesPage.css';
 import { useParams } from 'react-router-dom';
+import { FaArrowLeft, FaSearch } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const CandidatesPage = () => {
   const { electionId } = useParams();
   const [votingSystem, setVotingSystem] = useState(null);
   const [candidates, setCandidates] = useState([]);
+  const [filteredCandidates, setFilteredCandidates] = useState([]);
   const [electionName, setElectionName] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const init = async () => {
@@ -46,27 +51,63 @@ const CandidatesPage = () => {
         }
 
         setCandidates(fetchedCandidates);
+        setFilteredCandidates(fetchedCandidates);
       };
 
       fetchCandidates();
     }
   }, [votingSystem, electionId]);
 
+  const handleSearch = () => {
+    if (searchTerm === '') {
+      setFilteredCandidates(candidates); 
+    } else {
+      const filteredCandidates = candidates.filter(candidate =>
+        candidate.fullName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredCandidates(filteredCandidates);
+    }
+  };
+
+  useEffect(() => {
+    setFilteredCandidates(candidates); 
+  }, [candidates]);
+
   return (
     <div className="page-container">
       <Sidebar />
-      <div className="content-container">
-        <nav className="navbar">
-          <h2 className="navbar-title">{electionName} Candidates</h2>
+      <div className="content">
+        <nav className="navbar-candidate">
+          <div className="navbar-container">
+            <FaArrowLeft className="back-arrow" onClick={() => navigate('/voting-area')} />
+            <h2 className="navbar-title">{electionName}</h2>
+            <div className="search-container">
+              <input
+                type="text"
+                placeholder="Search by name"
+                value={searchTerm}
+                onChange={event => setSearchTerm(event.target.value)}
+              />
+              <button className="search-button" onClick={handleSearch}>
+                <FaSearch className="search-icon" />
+              </button>
+            </div>
+          </div>
         </nav>
         <div className="candidates-container">
-          {candidates.length > 0 ? (
-            candidates.map((candidate, index) => (
-              <div className="candidate-item" key={index}>
-                <h2>{candidate.fullName}</h2>
-                <p>Age: {candidate.age}</p>
-                <p>Description: {candidate.description}</p>
-                {candidate.image && <img src={`https://ipfs.io/ipfs/${candidate.image}`} alt="Candidate" />}
+          {filteredCandidates.length > 0 ? (
+            filteredCandidates.map(candidate => (
+              <div className="candidate-item" key={candidate.id}>
+                <div className="candidate-item-group">
+                  <div className="candidate-image">
+                    {candidate.image && <img src={`https://ipfs.io/ipfs/${candidate.image}`} alt="Candidate" />}
+                  </div>
+                  <div className="candidate-details">
+                    <h2>{candidate.fullName}</h2>
+                    <p>Age: {candidate.age}</p>
+                  </div>
+                </div>
+                <p className="candidate-description">Description: {candidate.description}</p>
               </div>
             ))
           ) : (

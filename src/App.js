@@ -36,23 +36,31 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route exact path="/" element={<StartPage />} />
+        <Route exact path="/" element={<StartPage />} />
           <Route path="/Signin" element={<SignIn />} />
           <Route path="/Signup" element={<SignUp />} />
-          <Route path="/Home" element={email ? <Home isAdmin={isAdmin} isUser={isUser} /> : <Navigate to="/" />} />
+
+          {isAdmin && email && <Route path="/" element={<Navigate to="/create-election" />} />}
+          {isAdmin && (
+            <Route path="/create-election" element={<AddElection />} />
+          )}
           {isAdmin && (
             <Route path="/add-candidate" element={<AddCandidate />} />
           )}
           {isAdmin && (
             <Route path="/candidates" element={<DetailCandidates />} />
           )}
-          {isAdmin && (
-            <Route path="/create-election" element={<AddElection />} />
+
+          {isUser && email && <Route path="/" element={<Navigate to="/home" />} />}
+          {isUser && (
+            <Route path="/home" element={<Home />} />
           )}
           {isUser && (
             <Route path="/voting-area" element={<DetailsElection />} />
           )}
-          
+          {isUser && (
+            <Route path="/candidates/:electionId" element={<CandidatesPage />} />
+          )}
         </Routes>
       </BrowserRouter>
     </div>

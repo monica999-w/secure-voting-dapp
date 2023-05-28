@@ -38,9 +38,9 @@ contract Auth {
 
     function login(string memory email, bytes32 password) public {
         require(emailToAddress[email] != address(0), "Email not found");
-        address userAddress = emailToAddress[email];
-        require(users[userAddress].password == password, "Invalid password");
-
+    address userAddress = emailToAddress[email];
+    require(users[userAddress].password == password, "Invalid password");
+    require(userAddress == msg.sender, "Invalid MetaMask address");
         loggedIn[userAddress] = true;
         emit AccountLoggedIn(userAddress, email);
     }

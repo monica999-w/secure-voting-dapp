@@ -46,18 +46,17 @@ body {
 }
 
 
-
 /* Stilizăm mesajul */
 .login-message {
   font-size: 59px;
-  color:rgb(168, 206, 250);
+  color:#3fbcee;
   text-align: center;
   margin: 16px;
 }
 
 .info {
   font-size: 19px;
-  color:  rgb(168, 206, 250);
+  color: #3fbcee;
   text-align: center;
   margin: 16px;
 }

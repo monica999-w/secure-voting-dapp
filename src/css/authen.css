@@ -2,18 +2,18 @@
 align-items: center;
 }
 
-.form-group {
+.form-groupp {
   margin-bottom: 15px;
 }
 
-.form-group label {
+.form-groupp label {
   display: block;
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 5px;
 }
 
-.form-group input {
+.form-groupp input {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;

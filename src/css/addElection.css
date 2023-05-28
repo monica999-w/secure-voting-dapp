@@ -1,32 +1,42 @@
 .page-container {
-    display: flex;
-    width: calc(100% - 300px);
-    margin-left: 250px;
-    background-color: #ffffffbe;
-  }
+  background: linear-gradient(to bottom, #f5f4f4, #e9e7e7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute; 
+}
+
+.content-container {
+  flex: 1;
+  padding: 20px;
+  position: relative;
   
-  .content-container {
-    flex: 1;
-    padding: 20px;
-  }
-  
-  .navbar {
-    background-color: #0654a7;
-    color: #fff;
-    padding: 30px;
-    margin-top: -20px;
-     width: 98%;
-     margin-left: -20px;
-  
-  }
-  
-  .navbar-title {
-    margin: 0;
-    text-align: left;
-  }
-  
+}
+
+.navbar {
+  background-image: linear-gradient(to right, #5cca4d, #41b432);
+  box-shadow: -8px 8px 5px rgba(0, 0, 0, 0.1);
+  color: #fff;
+  position: absolute;
+  width: 70%;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  border-radius: 5px;
+  padding: 15px; 
+}
+
+.navbar-title {
+  margin: 0;
+  font-size: 25px;
+  text-align: left;
+  margin-left: 20px;
+}
+
+
   .form-container {
-    margin-top: 20px;
+    margin-top: 40px;
   }
   
   .form-title {
@@ -34,59 +44,105 @@
   }
   
   .election-form {
-    max-width: 500px;
+    width: 80%;
     align-items: center;
     margin: 0 auto;
     padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     transition: max-width 0.3s ease;
+
   }
   
-  .election-form:hover {
-    max-width: 600px;
+  .form-groups {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 30px;
   }
   
-  .form-group {
+  .input-group {
+    width: calc(50% - 10px);
     margin-bottom: 15px;
+    
+  }
+  
+  .label-container {
+    display: flex;
+    align-items: center;
+    
+  }
+  
+  .label-container .icon {
+    margin-right: 5px;
   }
   
   label {
-    display: block;
-    margin:auto;
-    margin-right: 10px;
+    margin: 0;
+    color: rgb(102, 102, 102);
+    margin-right: 5px;
+  }
+
+  .input-select{
+    padding: 10px;
+    width: 100%;
   }
   
-  .form-groups input[type="text"],
-               input[type="date"] {
+  .input-group input[type="text"],
+  .input-group input[type="datetime-local"] {
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
     width: 70%;
+    color: rgb(102, 102, 102);
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #ccc;
+    color: rgb(102, 102, 102);
+  } 
+
+  .input-group input[type="text"].focused,
+  .input-group input[type="datetime-local"].focused,
+  .input-group select.focused {
+    border-bottom-color: red;
   }
+  
 
   .election-type-select {
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #ccc;
+    color: rgb(102, 102, 102);
     width: 75%;
   }
   
   .add-button {
-    background-color: #0654a7;
+    background-image: linear-gradient(to right, #41b432, #41b432);
+    width: 60%;
     color: #fff;
     border: none;
     border-radius: 4px;
     padding: 15px 60px;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 40px;
+
   }
   
   .add-button:hover {
-    background-color: #0654a7;
+    background-color: #41b432;
   }
+
+  .election-type-select option {
+    background-color: #f5f5f5;
+    font-size: 14px;
+    
+  }
+  
+  .election-type-select option:selection {
+    background-color: #0654a7;
+    color: #fff;
+  }
+ 
+  
   
   

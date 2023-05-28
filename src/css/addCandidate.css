@@ -1,0 +1,51 @@
+.candidate-form{
+    width: 80%;
+    align-items: center;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    transition: max-width 0.3s ease;
+}
+
+.input{
+    width: 100%;
+   margin-top: 20px;
+}
+
+.input input[type="text"],
+.input-group input{
+    padding: 10px;
+    width: 70%;
+    color: rgb(102, 102, 102);
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #ccc;
+    color: rgb(102, 102, 102);
+  } 
+
+  .form-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 30px;
+    }
+ 
+    .custom-file-upload {
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+        background-color: #0654a7;
+        color: #fff;
+        border-radius: 4px;
+      }
+      
+      .custom-file-upload span {
+        margin-right: 8px;
+      }
+      
+      .custom-file-upload:hover {
+        background-color: #094b9e;
+      }
+      
+      

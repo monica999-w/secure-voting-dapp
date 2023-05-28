@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { loadBlockchainData, uploadImageToIPFS } from '../../Web3helpers';
 import web3 from '../../Web3helpers';
 import Sidebar from '../sidebar/Sidebar';
-//import './addCandidate.css';
+import '../../css/addCandidate.css';
 
 const AddCandidate = () => {
   const [votingSystem, setVotingSystem] = useState(null);
@@ -56,6 +56,11 @@ const AddCandidate = () => {
     try {
       const accounts = await web3.eth.getAccounts();
       const fromAddress = accounts[0];
+      
+      if (age < 18 || age > 65) {
+        alert('Age must be between 18 and 65 years.');
+        return;
+      }
 
       await votingSystem.methods
         .addCandidate(fullName, parseInt(age), description, image, parseInt(electionId))
@@ -83,50 +88,62 @@ const AddCandidate = () => {
         <div className="form-container">
           <form className="candidate-form">
             <div className="form-group">
-              <label htmlFor="fullName">Full Name:</label>
+              <div className="input">
               <input
                 type="text"
                 id="fullName"
+                placeholder="Candidate's Full Name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
+               </div>
             </div>
+
             <div className="form-group">
-              <label htmlFor="age">Age:</label>
+               <div className="input-group">
               <input
                 type="number"
                 id="age"
+                placeholder="Candidate's Age"
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
+                required
+                min={18}
+                max={65}
               />
-            </div>
-            <div className="form-group">
-              <label htmlFor="description">Description:</label>
-              <input
-                type="text"
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="image">Image:</label>
+              </div>
+              <div className="input-group">
               <input
                 type="file"
                 accept="image/*"
                 id="image"
                 onChange={handleImageUpload}
               />
+              </div>
             </div>
             <div className="form-group">
-              <label htmlFor="electionId">Select Election:</label>
+               <div className="input">
+             
+              <input
+                type="text"
+                id="description"
+                placeholder="Description of the Candidate"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+              </div>
+            </div>
+            
+            <div className="form-group">
+            <div className="input-select">
               {activeElections.length > 0 ? (
                 <select
                   id="electionId"
                   value={electionId}
                   onChange={(e) => setElectionId(e.target.value)}
+                  className="election-type-select"
                 >
-                  <option value="">Select Election</option>
+                  <option value="">Choose Election</option>
                   {activeElections.map((election) => (
                     <option key={election.id} value={election.id}>
                       {election.name}
@@ -136,6 +153,7 @@ const AddCandidate = () => {
               ) : (
                 <p>No active elections</p>
               )}
+            </div>
             </div>
             <button className="add-button" type="button" onClick={handleAddCandidate}>
               Add Candidate
