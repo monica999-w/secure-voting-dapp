@@ -9,6 +9,7 @@ import AddElection from './js/election/AddElection';
 import DetailsElection from './js/election/DetailsElection';
 import DetailCandidates from './js/canditate/DetailCandidates';
 import CandidatesPage from './js/canditate/CandidatesPage';
+import Rezult from './js/Rezult';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { loadBlockchainData } from "./Web3helpers";
 
@@ -60,6 +61,9 @@ function App() {
           )}
           {isUser && (
             <Route path="/candidates/:electionId" element={<CandidatesPage />} />
+          )}
+          {isUser && (
+            <Route path="/results" element={<Rezult />} />
           )}
         </Routes>
       </BrowserRouter>

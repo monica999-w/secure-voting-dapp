@@ -1,0 +1,59 @@
+
+  
+  .election-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+  }
+  
+  .election-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .selected {
+    background-color: #e0e0e0;
+  }
+  
+  .election-name {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .winner-name {
+    margin-top: 5px;
+    color: green;
+    font-weight: bold;
+  }
+  
+  .chart-container {
+    margin-bottom: 20px;
+  }
+  
+  .finished-elections-container {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+  }
+  
+  .chart-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .finished-chart-container {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+  }
+  
+  /* Stilizări pentru grafice */
+  canvas {
+    width: 50%;
+    height: 50%;
+    
+    margin-bottom: 20px;
+    align-items: center;
+  }
+  

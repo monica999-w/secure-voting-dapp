@@ -30,7 +30,11 @@ const Sidebar = () => {
     checkUserRole();
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const blockchainData = await loadBlockchainData();
+    if (blockchainData && blockchainData.logout) {
+      await blockchainData.logout();
+    }
     localStorage.clear();
     navigate('/');
   };
@@ -63,10 +67,11 @@ const Sidebar = () => {
               <FaEdit size={30} />
               <span>Create Election</span>
             </Link>
+
             <Link to="/analytics">
               <FaChartLine size={30} />
               <span>Analytics</span>
-            </Link> 
+            </Link>
           </>
         )}
         {isUser && (

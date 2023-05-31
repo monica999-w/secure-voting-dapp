@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadBlockchainData } from '../../Web3helpers';
+import web3 from '../../Web3helpers';
 import Sidebar from '../sidebar/Sidebar';
 import '../../css/candidatesPage.css';
 import { useParams } from 'react-router-dom';
@@ -14,6 +15,8 @@ const CandidatesPage = () => {
   const [electionName, setElectionName] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+  const [showVoteContainer, setShowVoteContainer] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
 
   useEffect(() => {
     const init = async () => {
@@ -60,7 +63,7 @@ const CandidatesPage = () => {
 
   const handleSearch = () => {
     if (searchTerm === '') {
-      setFilteredCandidates(candidates); 
+      setFilteredCandidates(candidates); // Afiseaza toti candidatii
     } else {
       const filteredCandidates = candidates.filter(candidate =>
         candidate.fullName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -70,8 +73,29 @@ const CandidatesPage = () => {
   };
 
   useEffect(() => {
-    setFilteredCandidates(candidates); 
+    setFilteredCandidates(candidates); // Actualizeaza lista filtrata de candidati
   }, [candidates]);
+
+  const handleVoteSelect = (candidate) => {
+    setSelectedCandidate(candidate);
+    setShowVoteContainer(true);
+  };
+  
+  const handleVote = async () => {
+    try {
+      const accounts = await web3.eth.getAccounts();
+      const result = await votingSystem.methods.vote(parseInt(electionId), selectedCandidate.id).send({ from: accounts[0] });
+      console.log(result); // Afisam rezultatul tranzactiei de vot în consolă
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  const handleVoteContainer = () => {
+    setShowVoteContainer(false);
+    setSelectedCandidate(null);
+  };
 
   return (
     <div className="page-container">
@@ -108,12 +132,39 @@ const CandidatesPage = () => {
                   </div>
                 </div>
                 <p className="candidate-description">Description: {candidate.description}</p>
+                <button className="vote-button" onClick={() => handleVoteSelect(candidate)}>
+                  Click here to vote
+                </button>
               </div>
             ))
           ) : (
             <p>No candidates available for this election.</p>
           )}
         </div>
+        {showVoteContainer && (
+          <div className="vote-container">
+            <div className="vote-content">
+              <h2>Vote Confirmation</h2>
+              <p>Are you sure you want to vote for this candidate?</p>
+              {selectedCandidate && (
+                <div className="candidate-info">
+                  {selectedCandidate.image && (
+                    <img src={`https://ipfs.io/ipfs/${selectedCandidate.image}`} alt="Candidate" />
+                  )}
+                  <p>{selectedCandidate.fullName}</p>
+                </div>
+              )}
+              <div className="vote-actions">
+                <button className="vote-button" onClick={() => handleVote(selectedCandidate)}>
+                  Vote
+                </button>
+                <button className="close-button" onClick={handleVoteContainer}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

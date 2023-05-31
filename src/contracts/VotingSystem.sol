@@ -11,6 +11,7 @@ contract VotingSystem {
         string description;
         string image;
         uint electionId;
+        uint voteCount; // Adăugăm un câmp pentru numărul de voturi primite
     }
 
     struct Election {
@@ -20,11 +21,15 @@ contract VotingSystem {
         string organizedBy;
         uint startDate;
         uint endDate;
+        bool ended; // Adăugăm un câmp pentru a verifica dacă alegerile s-au încheiat
     }
 
     Election[] public elections;
     Candidate[] public candidates;
+    event CandidateEdited(uint candidateId, string fullName, uint age, string description, string image);
+    event CandidateDeleted(uint candidateId);
     mapping(uint => bool) public candidateExists;
+    mapping(address => mapping(uint => bool)) public hasVoted; // Mapare pentru a verifica dacă un utilizator a votat într-o anumită aleger
 
     event NewElection(
         uint id,
@@ -44,6 +49,8 @@ contract VotingSystem {
         uint electionId
     );
 
+    event Vote(uint electionId, uint candidateId, address voter);
+
     function addElection(
         string memory _name,
         ElectionType _electionType,
@@ -58,7 +65,7 @@ contract VotingSystem {
 
         uint electionId = elections.length;
         elections.push(
-            Election(electionId, _name, _electionType, _organizedBy, _startDate, _endDate)
+            Election(electionId, _name, _electionType, _organizedBy, _startDate, _endDate, false)
         );
 
         emit NewElection(electionId, _name, _electionType, _organizedBy, _startDate, _endDate);
@@ -77,7 +84,7 @@ contract VotingSystem {
         );
 
         require(
-            !electionEnded(),
+            !electionEnded(_electionId),
             "Election has ended. No more candidates can be added."
         );
 
@@ -93,7 +100,8 @@ contract VotingSystem {
                 _age,
                 _description,
                 _image,
-                _electionId
+                _electionId,
+                0
             )
         );
         candidateExists[candidates.length - 1] = true;
@@ -108,6 +116,23 @@ contract VotingSystem {
         );
     }
 
+    function vote(uint _electionId, uint _candidateId) public {
+        require(_electionId < elections.length, "Election does not exist.");
+        require(_candidateId < candidates.length, "Candidate does not exist.");
+        require(!hasVoted[msg.sender][_electionId], "You have already voted in this election.");
+
+        Election storage election = elections[_electionId];
+        require(!election.ended, "Election has ended. No more votes can be cast.");
+
+        Candidate storage candidate = candidates[_candidateId];
+        require(candidate.electionId == _electionId, "Candidate does not belong to the specified election.");
+
+        candidate.voteCount++; // Incrementăm numărul de voturi primite de către candidat
+        hasVoted[msg.sender][_electionId] = true; // Marchez că utilizatorul a votat în această aleger
+
+        emit Vote(_electionId, _candidateId, msg.sender);
+    }
+
     function getCandidateDetails(uint _candidateId)
         public
         view
@@ -116,6 +141,7 @@ contract VotingSystem {
             uint,
             string memory,
             string memory,
+            uint,
             uint
         )
     {
@@ -126,7 +152,8 @@ contract VotingSystem {
             candidate.age,
             candidate.description,
             candidate.image,
-            candidate.electionId
+            candidate.electionId,
+            candidate.voteCount
         );
     }
 
@@ -139,7 +166,8 @@ contract VotingSystem {
             ElectionType,
             string memory,
             uint,
-            uint
+            uint,
+            bool
         )
     {
         require(_electionId < elections.length, "Election does not exist.");
@@ -150,7 +178,8 @@ contract VotingSystem {
             election.electionType,
             election.organizedBy,
             election.startDate,
-            election.endDate
+            election.endDate,
+            election.ended
         );
     }
 
@@ -162,12 +191,10 @@ contract VotingSystem {
         return candidates.length;
     }
 
-    function electionEnded() public view returns (bool) {
-        if (elections.length == 0) {
-            return false;
-        }
-        Election storage currentElection = elections[elections.length - 1];
-        return block.timestamp > currentElection.endDate;
+    function electionEnded(uint _electionId) public view returns (bool) {
+        require(_electionId < elections.length, "Election does not exist.");
+        Election storage election = elections[_electionId];
+        return election.ended;
     }
 
     function getActiveElections() public view returns (Election[] memory) {
@@ -231,4 +258,57 @@ contract VotingSystem {
         }
         return false;
     }
+
+    function editCandidate(
+        uint _candidateId,
+        string memory _fullName,
+        uint _age,
+        string memory _description,
+        string memory _image
+    ) public {
+        require(candidateExists[_candidateId], "Candidate does not exist.");
+
+        Candidate storage candidate = candidates[_candidateId];
+        candidate.fullName = _fullName;
+        candidate.age = _age;
+        candidate.description = _description;
+        candidate.image = _image;
+
+        emit CandidateEdited(_candidateId, _fullName, _age, _description, _image);
+    }
+
+    function deleteCandidate(uint candidateId) public {
+  require(candidateId < candidates.length, "Candidate does not exist.");
+
+  // Remove the candidate from the array
+  for (uint i = candidateId; i < candidates.length - 1; i++) {
+    candidates[i] = candidates[i + 1];
+  }
+  candidates.pop();
+
+  // Update the candidateExists mapping
+  candidateExists[candidateId] = false;
 }
+
+function getFinishedElections() public view returns (Election[] memory) {
+    uint finishedElectionCount = 0;
+    for (uint i = 0; i < elections.length; i++) {
+        if (block.timestamp > elections[i].endDate) {
+            finishedElectionCount++;
+        }
+    }
+    Election[] memory finishedElections = new Election[](finishedElectionCount);
+    uint currentIndex = 0;
+    for (uint i = 0; i < elections.length; i++) {
+        if (block.timestamp > elections[i].endDate) {
+            finishedElections[currentIndex] = elections[i];
+            currentIndex++;
+        }
+    }
+    return finishedElections;
+}
+
+
+}
+
+
