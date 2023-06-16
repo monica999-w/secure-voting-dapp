@@ -17,6 +17,9 @@ const CandidatesPage = () => {
   const navigate = useNavigate();
   const [showVoteContainer, setShowVoteContainer] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [metamaskAddress, setMetamaskAddress] = useState('');
+  const [isAddressVerified, setIsAddressVerified] = useState(false);
+  const [isCNPAssociated, setIsCNPAssociated] = useState(false);
 
   useEffect(() => {
     const init = async () => {
@@ -63,7 +66,7 @@ const CandidatesPage = () => {
 
   const handleSearch = () => {
     if (searchTerm === '') {
-      setFilteredCandidates(candidates); // Afiseaza toti candidatii
+      setFilteredCandidates(candidates);
     } else {
       const filteredCandidates = candidates.filter(candidate =>
         candidate.fullName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -73,29 +76,50 @@ const CandidatesPage = () => {
   };
 
   useEffect(() => {
-    setFilteredCandidates(candidates); // Actualizeaza lista filtrata de candidati
+    setFilteredCandidates(candidates);
   }, [candidates]);
 
-  const handleVoteSelect = (candidate) => {
-    setSelectedCandidate(candidate);
-    setShowVoteContainer(true);
-  };
-  
-  const handleVote = async () => {
+  const checkAddressVerification = async () => {
     try {
+      const { voterRegistration } = await loadBlockchainData();
       const accounts = await web3.eth.getAccounts();
-      const result = await votingSystem.methods.vote(parseInt(electionId), selectedCandidate.id).send({ from: accounts[0] });
-      console.log(result); // Afisam rezultatul tranzactiei de vot în consolă
+      const userAddress = accounts[0];
+      setMetamaskAddress(userAddress);
+
+      const isAddressVerified = await voterRegistration.methods.isMetamaskVerified(userAddress).call();
+      setIsAddressVerified(isAddressVerified);
+
+      const userEmail = await voterRegistration.methods.getEmailByMetaMaskAddress(userAddress).call();
+      const isCNPAssociated = await voterRegistration.methods.getCNPByEmail(userEmail).call() !== '0';
+      setIsCNPAssociated(isCNPAssociated);
     } catch (error) {
       console.error(error);
     }
   };
 
+  const handleVoteSelect = (candidate) => {
+    setSelectedCandidate(candidate);
+    setShowVoteContainer(true);
+  };
+
+  const handleVote = async () => {
+    try {
+      const accounts = await web3.eth.getAccounts();
+      const result = await votingSystem.methods.vote(parseInt(electionId), selectedCandidate.id).send({ from: accounts[0] });
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleVoteContainer = () => {
     setShowVoteContainer(false);
     setSelectedCandidate(null);
   };
+
+  useEffect(() => {
+    checkAddressVerification(); // Verifică starea de verificare a adresei MetaMask
+  }, []);
 
   return (
     <div className="page-container">
@@ -132,9 +156,15 @@ const CandidatesPage = () => {
                   </div>
                 </div>
                 <p className="candidate-description">Description: {candidate.description}</p>
-                <button className="vote-button" onClick={() => handleVoteSelect(candidate)}>
-                  Click here to vote
-                </button>
+                {isCNPAssociated ? (
+                  <button className="vote-button" onClick={() => handleVoteSelect(candidate)}>
+                    Click here to vote
+                  </button>
+                ) : (
+                  <button className="vote-button" onClick={() => navigate('/voter-register')}>
+                    Click to verify account
+                  </button>
+                )}
               </div>
             ))
           ) : (

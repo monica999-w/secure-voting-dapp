@@ -1,0 +1,79 @@
+.voter-form{
+  width: 80%;
+  align-items: center;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  transition: max-width 0.3s ease;
+  
+}
+
+.navbar-voter{
+  background-image: linear-gradient(to right, #4acadb, #0babc0);
+  box-shadow: -8px 8px 5px rgba(0, 0, 0, 0.1);
+  color: #fff;
+  position: absolute;
+  width: 70%;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  border-radius: 5px;
+  padding: 15px; 
+}
+
+.input-CNP{
+  width: 100%;
+  margin-bottom: 15px;
+}
+.input-CNP input{
+  padding: 10px;
+    width: 70%;
+    color: rgb(102, 102, 102);
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #ccc;
+    color: rgb(102, 102, 102);
+  
+}
+.success-message {
+  color: rgb(20, 135, 170);
+}
+
+.error-message {
+  color: red;
+}
+
+.user-info-container {
+  margin-top: 20px;
+}
+
+.user-info-container p {
+  margin: 5px 0;
+}
+.center-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100vh;
+}
+
+.verification-image {
+  max-width: 100%;
+  height: auto;
+  
+}
+.form-group .verificationKYC {
+  display: block;
+  margin: 0 auto;
+}
+
+
+.success-message {
+  margin-top: 50px;
+}
+
+

@@ -9,9 +9,12 @@ import AddElection from './js/election/AddElection';
 import DetailsElection from './js/election/DetailsElection';
 import DetailCandidates from './js/canditate/DetailCandidates';
 import CandidatesPage from './js/canditate/CandidatesPage';
-import Rezult from './js/Rezult';
+import Rezult from './js/voter/Rezult';
+import Analytics from './js/voter/Analytics';
+import VoterRegistration from './js/voter/VoterRegistration';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { loadBlockchainData } from "./Web3helpers";
+
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -38,8 +41,9 @@ function App() {
       <BrowserRouter>
         <Routes>
         <Route exact path="/" element={<StartPage />} />
-          <Route path="/Signin" element={<SignIn />} />
-          <Route path="/Signup" element={<SignUp />} />
+        <Route path="/Signin" element={<SignIn />} />
+        <Route path="/Signup" element={<SignUp />} />
+        <Route path="/voter-register" element={<VoterRegistration />} />
 
           {isAdmin && email && <Route path="/" element={<Navigate to="/create-election" />} />}
           {isAdmin && (
@@ -50,6 +54,9 @@ function App() {
           )}
           {isAdmin && (
             <Route path="/candidates" element={<DetailCandidates />} />
+          )}
+          {isAdmin && (
+            <Route path="/analytics" element={<Analytics />} />
           )}
 
           {isUser && email && <Route path="/" element={<Navigate to="/home" />} />}
@@ -65,6 +72,9 @@ function App() {
           {isUser && (
             <Route path="/results" element={<Rezult />} />
           )}
+           
+            
+          
         </Routes>
       </BrowserRouter>
     </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { loadBlockchainData } from './../Web3helpers';
-import Sidebar from './sidebar/Sidebar';
-import '../css/rezult.css';
+import { loadBlockchainData } from '../../Web3helpers';
+import Sidebar from '../sidebar/Sidebar';
+import '../../css/rezult.css';
 import Chart from 'chart.js/auto';
 
 const Rezult = () => {

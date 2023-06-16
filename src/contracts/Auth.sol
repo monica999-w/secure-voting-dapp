@@ -14,6 +14,8 @@ contract Auth {
     mapping (string => address) private emailToAddress;
     mapping (address => bool) private loggedIn;
     mapping (address => bool) private metamaskRegistered;
+    mapping (address => string) private metamaskToEmail; // New mapping to store MetaMask address to email
+    string[] private allEmails; // New array to store all email addresses
 
     event AccountCreated(address indexed userAddress, string username, string email, bool isAdmin);
     event AccountLoggedIn(address indexed userAddress, string email);
@@ -31,6 +33,8 @@ contract Auth {
         emailToAddress[email] = userAddress;
         loggedIn[userAddress] = true;
         metamaskRegistered[userAddress] = true;
+        metamaskToEmail[userAddress] = email; // Store the email associated with MetaMask address
+        allEmails.push(email);
 
         emit AccountCreated(userAddress, username, email, isAdmin);
         emit AccountLoggedIn(userAddress, email);
@@ -38,16 +42,15 @@ contract Auth {
 
     function login(string memory email, bytes32 password) public {
         require(emailToAddress[email] != address(0), "Email not found");
-    address userAddress = emailToAddress[email];
-    require(users[userAddress].password == password, "Invalid password");
-    require(userAddress == msg.sender, "Invalid MetaMask address");
+        address userAddress = emailToAddress[email];
+        require(users[userAddress].password == password, "Invalid password");
+        require(userAddress == msg.sender, "Invalid MetaMask address");
         loggedIn[userAddress] = true;
         emit AccountLoggedIn(userAddress, email);
     }
 
     function logout() public {
         require(loggedIn[msg.sender], "Not logged in");
-
         loggedIn[msg.sender] = false;
     }
 
@@ -67,4 +70,25 @@ contract Auth {
             return false;
         }
     }
+
+    function isMetaMaskRegistered(address metamaskAddress) public view returns (bool) {
+        return metamaskRegistered[metamaskAddress];
+    }
+
+    function getUserEmail(address userAddress) public view returns (string memory) {
+        return metamaskToEmail[userAddress];
+    }
+
+     function getAllUserEmails() public view returns (string[] memory) {
+        return allEmails;
+    }
+
+    function getMetaMaskAddressByEmail(string memory userEmail) public view returns (address) {
+         return emailToAddress[userEmail];
+}
+    function getUsernameByEmail(string memory email) public view returns (string memory) {
+        address userAddress = emailToAddress[email];
+        return users[userAddress].username;
+    }
+
 }

@@ -102,7 +102,7 @@ const DetailsElection = () => {
   return (
     <div className="page-container">
       <Sidebar />
-      <div className="content">
+      <div className="content-container">
         <nav className="navbar-candidate">
         <div className="navbar-container">
           <h2 className="navbar-title">Voting Area</h2>
