@@ -1,59 +1,165 @@
+.page{
+background-color: #f5f4f4;
+display: flex;
+height: auto;
+width: calc(100% - 300px);
+margin-left: 300px; 
+}
+.chart-container {
+  width: 380px;
+  height: 380px;
+  margin: 0 auto 20px;
+}
+.active-election-container {
+  margin-top: -10px;
+}
 
-  
-  .election-item {
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    cursor: pointer;
+.finished-chart-container {
+  width: 400px;
+  height: 1000px;
+  margin: 0 auto;
+}
+
+.elections-title {
+  background-image: linear-gradient(to right, #0babc0, #39bcce, #b7eef1, #f5f4f4);
+  color: #fff;
+  position: absolute;
+  width: 80%;
+  left: 43%;
+  transform: translateX(-50%);
+  border-radius: 1px;
+  padding: 24px;
+  text-align: left;
+}
+
+.elections-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 90px;
+}
+
+.election-item {
+  padding: 0px;
+  border: 1px solid #ffffff;
+  margin-bottom: 20px;
+  /* cursor: pointer; */
+}
+
+.election-item.selected {
+  background-color: #ce6a6a;
+}
+
+.winner-name {
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+@media (max-width: 767px) {
+  .content-container {
+    margin-left: 0;
   }
-  
-  .election-item:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .selected {
-    background-color: #e0e0e0;
-  }
-  
-  .election-name {
-    font-size: 16px;
-    font-weight: bold;
-  }
-  
-  .winner-name {
-    margin-top: 5px;
-    color: green;
-    font-weight: bold;
-  }
-  
+
   .chart-container {
-    margin-bottom: 20px;
-  }
   
-  .finished-elections-container {
-    margin-top: 20px;
-    border-top: 1px solid #ccc;
-    padding-top: 20px;
+    max-width: 300px;
+    height: 300px;
+    margin: 0 auto 0px;
   }
-  
-  .chart-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
+
   .finished-chart-container {
-    margin-top: 20px;
-    border-top: 1px solid #ccc;
-    padding-top: 20px;
+    width: 100%;
+    max-width: 400px;
+    height: 400px;
+    margin: 0 auto;
   }
+}
+
+.map-container {
+  width: 800px;
+  height: 600px;
+}
+.rsm-geographies {
+  width: 100%;
+  height: 100%;
+}
+
+.result-table {
+  width: 100%;
+  background-color: white;
+  border-collapse: collapse;
+}
+
+.result-table tr:hover {
+  background-color: white; 
+}
+
+.result-table td {
+  padding: 10px;
+  color: #2390c2; /* Culoarea textului */
+  font-family: "Arial", sans-serif; /* Familie de fonturi */
+  font-size: 20px; /* Dimensiunea fontului */
+  font-weight: normal;
+  background-color: white; 
+}
+
+.result-table p {
+  margin-top: 3px;
+  color: #555555;
+  font-family: "Arial", sans-serif;
+  font-size: 17px;
+  font-weight: normal;
+  line-height: 1.3;
+  text-indent: 20px; 
+}
+
+
+p.every-vote-counts {
+  text-align: center;
+  color: #2390c2 !important;
+  size: 20px;
+}
+
+.age {
+  display: flex;
+  align-items: center;
+  width: auto;
+  height: 500px;
+}
+.age-text p{
+  margin-top: 3px;
+  color: #555555;
+  font-family: "Arial", sans-serif;
+  font-size: 17px;
+  font-weight: normal;
+  line-height: 1.3;
+  text-indent: 20px; 
+}
+
+.age-counts {
+  flex: 1;
+  margin-right: 50px;
+
+}
+
+.age-text h3{
+  text-align: left;
+  margin: 40px;
+}
+.age-counts ul{
+  color: #2390c2; /* Culoarea textului */
+  font-size: 20px; 
+  text-indent: 7px; 
+  margin-top: 10px;
+  text-align: left;
+}
+
+.canvas-age {
+  align-items: center;
   
-  /* Stilizări pentru grafice */
-  canvas {
-    width: 50%;
-    height: 50%;
-    
-    margin-bottom: 20px;
-    align-items: center;
-  }
-  
+}
+
+
+
+
+
+

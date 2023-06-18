@@ -9,6 +9,7 @@ contract VoterRegistration {
     mapping(string => uint) private emailToCNP;
     mapping(uint => address) private cnpToAddress;
     mapping(address => bool) private metamaskVerified;
+    uint[] private allCNPs;
 
     constructor(Auth _authContract) {
         authContract = _authContract;
@@ -24,6 +25,8 @@ contract VoterRegistration {
         metamaskToEmail[metamaskAddress] = userEmail;
         emailToCNP[userEmail] = cnp;
         cnpToAddress[cnp] = metamaskAddress;
+
+        allCNPs.push(cnp);
     }
 
     function getEmailByMetaMaskAddress(address metamaskAddress) public view returns (string memory) {
@@ -50,6 +53,10 @@ contract VoterRegistration {
     string memory userEmail = metamaskToEmail[metamaskAddress];
     return emailToCNP[userEmail] != 0;
 }
+
+function getAllCNPs() public view returns (uint[] memory) {
+        return allCNPs;
+    }
 
 
 }
